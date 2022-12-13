@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/gamesFragment"
+        android:name="com.yousefelsayed.gamescheap.fragment.GamesFragment"
+        android:label="GamesFragment" >
+        <action
+            android:id="@+id/action_gamesFragment_to_noInternetFragment"
+            app:destination="@id/noInternetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.yousefelsayed.gamescheap.fragment.HomeFragment"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_noInternetFragment"
+            app:destination="@id/noInternetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.yousefelsayed.gamescheap.fragment.SearchFragment"
+        android:label="SearchFragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_noInternetFragment"
+            app:destination="@id/noInternetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/noInternetFragment"
+        android:name="com.yousefelsayed.gamescheap.fragment.NoInternetFragment"
+        android:label="NoInternetFragment" >
+        <action
+            android:id="@+id/action_noInternetFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+</navigation>

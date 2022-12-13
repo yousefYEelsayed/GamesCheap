@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/backgroundColor"
+        app:layoutDescription="@xml/fragment_search_xml_constraintlayout_scene">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchEditTextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:hint="@string/search"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginStart="@dimen/smallMarginStart"
+            android:layout_marginEnd="@dimen/smallMarginEnd"
+            app:boxBackgroundColor="@color/searchBackgroundColor"
+            app:boxStrokeColor="@color/searchBoxStrokeColor"
+            app:endIconContentDescription="@string/search_content_description_end_icon"
+            app:hintTextColor="@color/textColor"
+            app:endIconDrawable="@drawable/ic_baseline_search_gray_24"
+            app:endIconMode="custom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLines="1"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/textAboveInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColor"
+            android:textStyle="bold"
+            android:textSize="@dimen/titleTextSize"
+            android:text="@string/search_in_more_than_15_store"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@id/searchEditTextLayout"
+            android:layout_marginBottom="@dimen/marginBottom"
+            android:layout_marginEnd="@dimen/marginEnd"
+            android:layout_marginStart="@dimen/marginStart"/>
+        <TextView
+            android:id="@+id/textBelowInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColor"
+            android:textStyle="bold"
+            android:textSize="@dimen/titleTextSize"
+            android:text="@string/for_fair_prices"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/searchEditTextLayout"
+            android:layout_marginTop="@dimen/marginTop"
+            android:layout_marginEnd="@dimen/marginEnd"
+            android:layout_marginStart="@dimen/marginStart"/>
+        <RelativeLayout
+            android:id="@+id/searchZeroFoundLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/searchEditTextLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="invisible">
+            <ImageView
+                android:id="@+id/zeroResultsImageView"
+                android:layout_width="@dimen/no_internet_image_width"
+                android:layout_height="@dimen/no_internet_image_height"
+                android:src="@drawable/scribble"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/zero_results_found_img_desc"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/zeroResultsImageView"
+                android:text="We couldn't find any deals"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/textSize"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@id/searchEditTextLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/loadingRelativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/backgroundColor"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/searchEditTextLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="@dimen/marginTop">
+            <GridLayout
+                android:id="@+id/shimmerGridLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:columnCount="2"
+                android:layout_marginStart="@dimen/marginStart"
+                android:layout_marginEnd="@dimen/marginEnd">
+                <include layout="@layout/shimmer_steam_epicgames_recycler_item_design"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="start"/>
+                <include layout="@layout/shimmer_steam_epicgames_recycler_item_design"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="end"/>
+                <include layout="@layout/shimmer_steam_epicgames_recycler_item_design"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="@dimen/marginTop"/>
+                <include layout="@layout/shimmer_steam_epicgames_recycler_item_design"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/marginTop"/>
+                <include layout="@layout/shimmer_steam_epicgames_recycler_item_design"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="@dimen/marginTop"/>
+                <include layout="@layout/shimmer_steam_epicgames_recycler_item_design"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/marginTop"/>
+                <include layout="@layout/shimmer_steam_epicgames_recycler_item_design"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="@dimen/marginTop"/>
+                <include layout="@layout/shimmer_steam_epicgames_recycler_item_design"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/marginTop"/>
+            </GridLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+        <include android:id="@+id/serverErrorLayoutInclude" layout="@layout/server_error_screen" android:visibility="gone"/>
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+</layout>

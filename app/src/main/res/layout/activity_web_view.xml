@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.WebViewActivity">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/backgroundColor">
+        <RelativeLayout
+            android:id="@+id/actionBarRelativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:background="@drawable/game_details_toolbar_background">
+
+            <ImageView
+                android:id="@+id/exitImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_arrow_back_ios_new_24_black"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/smallMarginStart"
+                android:contentDescription="@string/exit_button" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/textColor"
+                android:textStyle="bold"
+                android:textSize="@dimen/textSize"
+                android:layout_centerInParent="true"/>
+
+            <ImageView
+                android:id="@+id/openInBrowser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_open_in_browser_24_black"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/marginEnd" />
+
+        </RelativeLayout>
+        <WebView
+            android:id="@+id/gameWebView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/actionBarRelativeLayout"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <RelativeLayout
+            android:id="@+id/loadingRelativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/actionBarRelativeLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/backgroundColor">
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="@dimen/lottieWidth"
+                android:layout_height="@dimen/lottieHeight"
+                android:layout_centerInParent="true"
+                app:lottie_fileName="pacman_ghost.json"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true" />
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    android:id="@+id/searchMainCardView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="5dp"
+    android:layout_marginStart="@dimen/marginStart"
+    android:layout_marginEnd="@dimen/marginEnd"
+    android:layout_marginTop="@dimen/marginTop">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gameMainLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="h,12:22"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/gameImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Game Image Thumbnail"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="w,9:17"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@color/transparentBlack">
+                <TextView
+                    android:id="@+id/gameTitleTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Game Title"
+                    android:textSize="@dimen/titleTextSize"
+                    android:textColor="@color/white"
+                    android:maxLines="2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginStart="@dimen/smallMarginStart"
+                    android:layout_marginEnd="@dimen/smallMarginEnd"
+                    android:layout_marginTop="@dimen/smallMarginTop"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="@dimen/smallMarginStart"
+                    android:layout_marginEnd="@dimen/smallMarginEnd"
+                    android:layout_marginBottom="@dimen/smallMarginBottom">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="Sale Price:"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/smallTextSize"
+                        android:layout_weight="1.5"
+                        android:layout_gravity="center"
+                        android:gravity="start"/>
+                    <TextView
+                        android:id="@+id/currentGamePrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/currentPriceColor"
+                        android:text="15$"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/smallTextSize"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:gravity="end" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

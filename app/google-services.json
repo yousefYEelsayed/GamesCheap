@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "893753236547",
+    "project_id": "cheap-games-test",
+    "storage_bucket": "cheap-games-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893753236547:android:10180425e8b4199e7208f6",
+        "android_client_info": {
+          "package_name": "com.yousefelsayed.gamescheap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893753236547-nfhjlfsaq9vr32n96oql7o9bhlnis8bu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-4-oV2z096YGA1TDSqEMew7UWVZh7Wz8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893753236547-nfhjlfsaq9vr32n96oql7o9bhlnis8bu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

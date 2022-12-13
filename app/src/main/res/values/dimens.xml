@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="smallMarginTop">8dp</dimen>
+    <dimen name="tinyMarginTop">16dp</dimen>
+    <dimen name="marginTop">16dp</dimen>
+    <dimen name="doubleMarginTop">24dp</dimen>
+    <dimen name="tinyMarginBottom">5dp</dimen>
+    <dimen name="smallMarginBottom">8dp</dimen>
+    <dimen name="marginBottom">16dp</dimen>
+    <dimen name="doubleMarginBottom">24dp</dimen>
+    <dimen name="maxMarginBottom">78dp</dimen>
+    <dimen name="smallMarginEnd">8dp</dimen>
+    <dimen name="marginEnd">16dp</dimen>
+    <dimen name="smallMarginStart">8dp</dimen>
+    <dimen name="marginStart">16dp</dimen>
+    <dimen name="smallPadding">5dp</dimen>
+    <dimen name="regularPadding">10dp</dimen>
+    <dimen name="doublePadding">16dp</dimen>
+    <dimen name="minHeight">500dp</dimen>
+
+    <!--Text Dimens -->
+    <dimen name="tinyTextSize">8sp</dimen>
+    <dimen name="smallTextSize">13sp</dimen>
+    <dimen name="textSize">16sp</dimen>
+    <dimen name="medTextSize">16sp</dimen>
+    <dimen name="titleTextSize">20sp</dimen>
+    <dimen name="hugeTextSize">32sp</dimen>
+
+    <!--Image Dimens -->
+    <dimen name="regularImageStrokeSize">1sp</dimen>
+    <dimen name="greenBarAboveGameImageWidth">40dp</dimen>
+    <dimen name="greenBarAboveGameImageHeight">24dp</dimen>
+    <dimen name="greenBarTopMargin">4dp</dimen>
+
+    <!--Lottie Dimens -->
+    <dimen name="lottieWidth">100dp</dimen>
+    <dimen name="lottieHeight">100dp</dimen>
+
+    <!--Button Dimens -->
+    <dimen name="buttonCornerRadius">0dp</dimen>
+
+    <!--Bottom Sheet Icon -->
+    <dimen name="bottom_sheet_icon_width">32dp</dimen>
+    <dimen name="bottom_sheet_icon_height">4dp</dimen>
+
+    <!--Game Item!-->
+    <dimen name="game_item_width">155dp</dimen>
+
+    <!--No Internet ImageView!-->
+    <dimen name="no_internet_image_width">150dp</dimen>
+    <dimen name="no_internet_image_height">150dp</dimen>
+
+    <!--Ads -->
+    <dimen name="gnt_no_margin">0dp</dimen>
+    <dimen name="gnt_no_size">0dp</dimen>
+    <dimen name="gnt_default_margin">10dp</dimen>
+    <dimen name="gnt_text_size_large">15sp</dimen>
+    <dimen name="gnt_ad_indicator_height">20dp</dimen>
+    <dimen name="gnt_ad_indicator_top_margin">0dp</dimen>
+    <dimen name="gnt_ad_indicator_text_size">10sp</dimen>
+    <dimen name="gnt_text_size_small">12sp</dimen>
+
+</resources>

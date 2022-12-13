@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">CheapGames</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="view">View</string>
+    <string name="top_deals">Top Deals:</string>
+    <string name="exit_button">Exit Button</string>
+    <string name="Free_String">Free</string>
+    <string name="hundred_percent">100%</string>
+    <string name="search_content_description_end_icon">Search Button</string>
+    <string name="search">Search</string>
+    <string name="ooops">Ooops :(</string>
+    <string name="internet_noy_found_message">No internet connection was found!</string>
+    <string name="retry">Retry</string>
+    <string name="no_internet_skull_image_description">No Internet Skull Image</string>
+    <string name="zero_results_found_img_desc">Zero results found</string>
+    <string name="search_in_more_than_15_store">Search in more than 15 Stores</string>
+    <string name="for_fair_prices">For fair prices!</string>
+    <string name="priceText">%1$s$</string>
+    <string name="percentageText">%1$s%%</string>
+
+    <!-- ADS !-->
+    <string name="home_screen_banner_ad">ca-app-pub-2118106966010047/7354208466</string>
+    <string name="games_screen_banner_ad">ca-app-pub-2118106966010047/3394782158</string>
+    <string name="games_screen_interstitial_ad">ca-app-pub-2118106966010047/6041126794</string>
+    <string name="deal_screen_interstitial_ad">ca-app-pub-2118106966010047/9788800116</string>
+</resources>

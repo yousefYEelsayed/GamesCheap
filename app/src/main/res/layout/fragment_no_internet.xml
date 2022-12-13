@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.NoInternetFragment"
+        android:background="@color/backgroundColor">
+        <ImageView
+            android:id="@+id/wifiImageView"
+            android:layout_width="@dimen/no_internet_image_width"
+            android:layout_height="@dimen/no_internet_image_height"
+            android:src="@drawable/danger_skull"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/no_internet_skull_image_description" />
+        <TextView
+            android:id="@+id/noInternetTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ooops"
+            android:textColor="@color/textColor"
+            android:textStyle="bold"
+            android:textSize="@dimen/titleTextSize"
+            android:layout_below="@id/wifiImageView"
+            android:layout_marginTop="@dimen/smallMarginTop"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:id="@+id/noInternetText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/internet_noy_found_message"
+            android:textColor="@color/textColor"
+            android:textSize="@dimen/textSize"
+            android:layout_below="@id/noInternetTitle"
+            android:layout_marginTop="@dimen/smallMarginTop"
+            android:layout_centerInParent="true"/>
+        <Button
+            android:id="@+id/retryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retry"
+            android:textColor="@color/white"
+            android:layout_below="@id/noInternetText"
+            android:layout_marginTop="@dimen/smallMarginTop"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+</layout>
