@@ -12,7 +12,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -22,14 +25,14 @@ import com.yousefelsayed.gamescheap.activity.GameDetailsActivity
 import com.yousefelsayed.gamescheap.activity.WebViewActivity
 import com.yousefelsayed.gamescheap.adapter.SteamEpicGamesRecyclerAdapter
 import com.yousefelsayed.gamescheap.adapter.TopGamesRecyclerAdapter
+import com.yousefelsayed.gamescheap.api.Status
 import com.yousefelsayed.gamescheap.databinding.FragmentHomeBinding
 import com.yousefelsayed.gamescheap.model.Games
 import com.yousefelsayed.gamescheap.model.GamesItem
-import com.yousefelsayed.gamescheap.viewmodel.GamesViewModel
-import com.yousefelsayed.gamescheap.viewmodel.GamesViewModelFactory
-import com.yousefelsayed.gamescheap.viewmodel.SteamAndEpicGamesViewModel
-import com.yousefelsayed.gamescheap.viewmodel.SteamAndEpicGamesViewModelFactory
+import com.yousefelsayed.gamescheap.viewmodel.HomeFragmentViewModel
+import com.yousefelsayed.gamescheap.viewmodel.HomeFragmentViewModelFactory
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
@@ -37,24 +40,19 @@ class HomeFragment : DaggerFragment() {
 
     private var _view:FragmentHomeBinding? = null
     private val view get() = _view!!
-    //Steam and EpicGames backend
+    //Backend
     @Inject
-    lateinit var steamAndEpicGamesViewModelFactory: SteamAndEpicGamesViewModelFactory
-    private var _steamAndEpicGamesViewModel: SteamAndEpicGamesViewModel? = null
-    private val steamAndEpicGamesViewModel: SteamAndEpicGamesViewModel get() = _steamAndEpicGamesViewModel!!
+    lateinit var homeFragmentViewModelFactory: HomeFragmentViewModelFactory
+    private var _homeFragmentViewModel: HomeFragmentViewModel? = null
+    private val homeFragmentViewModel: HomeFragmentViewModel get() = _homeFragmentViewModel!!
+    //Adapters
     private var steamEpicGamesAdapter:SteamEpicGamesRecyclerAdapter? = null
-    //Top Games Recyclerview backend
-    @Inject
-    lateinit var gamesViewModelFactory: GamesViewModelFactory
-    private var _gamesViewModel: GamesViewModel? = null
-    private val gamesViewModel: GamesViewModel get() = _gamesViewModel!!
     private var topGamesAdapter:TopGamesRecyclerAdapter? = null
     //Ads
     private val adRequest = AdRequest.Builder().build()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _view = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
-        retainInstance = true
         init()
         setUpListeners()
         setUpObservers()
@@ -81,8 +79,7 @@ class HomeFragment : DaggerFragment() {
     //Views functions
     private fun init(){
         //Backend
-        _steamAndEpicGamesViewModel = ViewModelProvider(this@HomeFragment, steamAndEpicGamesViewModelFactory)[SteamAndEpicGamesViewModel::class.java]
-        _gamesViewModel = ViewModelProvider(this@HomeFragment, gamesViewModelFactory)[GamesViewModel::class.java]
+        _homeFragmentViewModel = ViewModelProvider(this@HomeFragment, homeFragmentViewModelFactory)[HomeFragmentViewModel::class.java]
     }
     private fun setUpListeners(){
         view.viewMoreButton.setOnClickListener{
@@ -94,18 +91,26 @@ class HomeFragment : DaggerFragment() {
         }
     }
     private fun setUpObservers(){
-        steamAndEpicGamesViewModel.requestStatus.observe(viewLifecycleOwner) {
-            if (it == "SUCCESS"){
-                setUpSteamEpicGamesRecycler(steamAndEpicGamesViewModel.games.value!!)
-            }else if(it != ""){
-                showViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                homeFragmentViewModel.steamEpicGames.collect{ result ->
+                    when(result.status){
+                        Status.LOADING -> view.steamEpicGamesShimmerLayout.startShimmer()
+                        Status.SUCCESS -> setUpSteamEpicGamesRecycler(result.data!!)
+                        Status.ERROR -> showViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
+                    }
+                }
             }
         }
-        gamesViewModel.requestStatus.observe(viewLifecycleOwner) {
-            if (it == "SUCCESS"){
-                setUpTopGamesRecycler(gamesViewModel.games.value!!)
-            }else if(it != ""){
-                showViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                homeFragmentViewModel.topGames.collect{ result ->
+                    when(result.status){
+                        Status.LOADING -> view.topGamesShimmerView.startShimmer()
+                        Status.SUCCESS -> setUpTopGamesRecycler(result.data!!)
+                        Status.ERROR -> showViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
+                    }
+                }
             }
         }
     }
@@ -114,7 +119,7 @@ class HomeFragment : DaggerFragment() {
         if (!checkForInternet()){
             return
         }
-        steamAndEpicGamesViewModel.startSteamEpicGamesRequest()
+        homeFragmentViewModel.startSteamEpicGamesRequest()
     }
     private fun setUpSteamEpicGamesRecycler(games: Games){
         view.sectionsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL ,false)
@@ -146,7 +151,7 @@ class HomeFragment : DaggerFragment() {
         if (!checkForInternet()){
             return
         }
-        gamesViewModel.startGamesRequest()
+        homeFragmentViewModel.startTopGamesRequest()
     }
     private fun setUpTopGamesRecycler(games: Games) {
         view.topGamesRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL ,false)
@@ -221,13 +226,6 @@ class HomeFragment : DaggerFragment() {
         view.homeScreenBannerAd.visibility = View.GONE
     }
 
-    override fun onResume() {
-        super.onResume()
-        //Views
-        view.steamEpicGamesShimmerLayout.startShimmer()
-        view.topGamesShimmerView.startShimmer()
-    }
-
     override fun onDestroyView() {
         view.homeScreenBannerAd.destroy()
         steamEpicGamesAdapter = null
@@ -235,8 +233,7 @@ class HomeFragment : DaggerFragment() {
         view.topGamesRecyclerView.adapter = null
         view.sectionsRecyclerView.adapter = null
         _view = null
-        _steamAndEpicGamesViewModel = null
-        _gamesViewModel = null
+        _homeFragmentViewModel = null
         viewModelStore.clear()
         super.onDestroyView()
     }

@@ -16,17 +16,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.yousefelsayed.gamescheap.R
 import com.yousefelsayed.gamescheap.activity.WebViewActivity
 import com.yousefelsayed.gamescheap.adapter.SearchResultsRecyclerAdapter
+import com.yousefelsayed.gamescheap.api.Status
 import com.yousefelsayed.gamescheap.databinding.FragmentSearchBinding
 import com.yousefelsayed.gamescheap.model.SearchModel
 import com.yousefelsayed.gamescheap.model.SearchModelItem
-import com.yousefelsayed.gamescheap.viewmodel.SearchViewModel
-import com.yousefelsayed.gamescheap.viewmodel.SearchViewModelFactory
+import com.yousefelsayed.gamescheap.viewmodel.SearchFragmentViewModel
+import com.yousefelsayed.gamescheap.viewmodel.SearchFragmentViewModelFactory
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SearchFragment: DaggerFragment() {
@@ -36,8 +41,8 @@ class SearchFragment: DaggerFragment() {
     private val view get() = _view!!
     //Backend
     @Inject
-    lateinit var searchViewModelFactory: SearchViewModelFactory
-    private lateinit var searchViewModel: SearchViewModel
+    lateinit var searchFragmentViewModelFactory: SearchFragmentViewModelFactory
+    private lateinit var searchFragmentViewModel: SearchFragmentViewModel
     //Screen Orientation
     private var itemsPerRow = 2
 
@@ -68,7 +73,7 @@ class SearchFragment: DaggerFragment() {
     }
 
     private fun init(){
-        searchViewModel = ViewModelProvider(this@SearchFragment,searchViewModelFactory)[SearchViewModel::class.java]
+        searchFragmentViewModel = ViewModelProvider(this@SearchFragment,searchFragmentViewModelFactory)[SearchFragmentViewModel::class.java]
     }
     @SuppressLint("ClickableViewAccessibility")
     private fun setupListeners(){
@@ -99,12 +104,16 @@ class SearchFragment: DaggerFragment() {
         }
     }
     private fun setupObservers(){
-        searchViewModel.requestStatus.observe(viewLifecycleOwner) {
-            clearRecyclerView()
-            if (it == "SUCCESS"){
-                setUpSearchResultsRecyclerData(searchViewModel.searchData.value!!)
-            }else if(it != "" && view.searchEditText.text.toString() != ""){
-                view.serverErrorLayoutInclude.serverErrorMainLayout.setVisibilityForMotionLayout(View.VISIBLE)
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                searchFragmentViewModel.searchData.collect{ result ->
+                    clearRecyclerView()
+                    when(result.status){
+                        Status.LOADING -> view.loadingRelativeLayout.startShimmer()
+                        Status.SUCCESS -> setUpSearchResultsRecyclerData(result.data!!)
+                        Status.ERROR -> view.serverErrorLayoutInclude.serverErrorMainLayout.setVisibilityForMotionLayout(View.VISIBLE)
+                    }
+                }
             }
         }
     }
@@ -120,7 +129,7 @@ class SearchFragment: DaggerFragment() {
         view.searchZeroFoundLayout.setVisibilityForMotionLayout(View.INVISIBLE)
         view.loadingRelativeLayout.setVisibilityForMotionLayout(View.VISIBLE)
         view.loadingRelativeLayout.startShimmer()
-        searchViewModel.startSearch(cleanSearchString)
+        searchFragmentViewModel.startSearch(cleanSearchString)
 
     }
     private fun setUpSearchResultsRecyclerData(it: SearchModel) {
@@ -170,7 +179,6 @@ class SearchFragment: DaggerFragment() {
     }
 
     override fun onDestroyView() {
-        viewModelStore.clear()
         _view = null
         super.onDestroyView()
     }

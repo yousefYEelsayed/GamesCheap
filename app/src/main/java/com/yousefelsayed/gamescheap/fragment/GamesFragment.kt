@@ -14,7 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -30,6 +33,7 @@ import com.yousefelsayed.gamescheap.R
 import com.yousefelsayed.gamescheap.activity.GameDetailsActivity
 import com.yousefelsayed.gamescheap.activity.WebViewActivity
 import com.yousefelsayed.gamescheap.adapter.GamesRecyclerAdapter
+import com.yousefelsayed.gamescheap.api.Status
 import com.yousefelsayed.gamescheap.databinding.FragmentGamesBinding
 import com.yousefelsayed.gamescheap.viewmodel.FilterProfile
 import com.yousefelsayed.gamescheap.model.Games
@@ -37,6 +41,7 @@ import com.yousefelsayed.gamescheap.model.GamesItem
 import com.yousefelsayed.gamescheap.model.StoresModel
 import com.yousefelsayed.gamescheap.viewmodel.*
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*
 import javax.inject.Inject
@@ -53,14 +58,10 @@ class GamesFragment : DaggerFragment() {
     private lateinit var filterViewModel: FilterProfile
     //Backend
     @Inject
-    lateinit var storesViewModelFactory: StoresViewModelFactory
-    private var _storesViewModel: StoresViewModel? = null
-    private val storesViewModel: StoresViewModel get() = _storesViewModel!!
+    lateinit var gamesFragmentViewModelFactory: GamesFragmentViewModelFactory
+    private var _gamesFragmentViewModel: GamesFragmentViewModel? = null
+    private val gamesFragmentViewModel: GamesFragmentViewModel get() = _gamesFragmentViewModel!!
     private lateinit var storesModel: StoresModel
-    @Inject
-    lateinit var gamesDealsViewModelFactory: GamesDealsViewModelFactory
-    private var _gamesDealsViewModel: GamesDealsViewModel? = null
-    private val gamesDealsViewModel: GamesDealsViewModel get() = _gamesDealsViewModel!!
     //Filter Data
     private var addingNewItemsToGamesRecycler:Boolean = false
     //RecyclerView
@@ -100,8 +101,7 @@ class GamesFragment : DaggerFragment() {
     }
 
     private fun init(){
-        _gamesDealsViewModel = ViewModelProvider(this@GamesFragment,gamesDealsViewModelFactory)[GamesDealsViewModel::class.java]
-        _storesViewModel = ViewModelProvider(this@GamesFragment,storesViewModelFactory)[StoresViewModel::class.java]
+        _gamesFragmentViewModel = ViewModelProvider(this@GamesFragment,gamesFragmentViewModelFactory)[GamesFragmentViewModel::class.java]
         filterViewModel = ViewModelProvider(requireActivity())[FilterProfile::class.java]
     }
     private fun setUpListeners(){
@@ -154,7 +154,7 @@ class GamesFragment : DaggerFragment() {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1)){
                     if (addingNewItemsToGamesRecycler || !checkForInternet()) return
-                    if (gamesDealsViewModel.pagesMaxValue.toInt() > filterViewModel.currentGamesPageNumber){
+                    if (gamesFragmentViewModel.pagesMaxValue.toInt() > filterViewModel.currentGamesPageNumber){
                         //Scroll To last item for better UX
                         recyclerView.scrollToPosition(gamesRecyclerArray.size - 1)
                         showLoadingProgressBar()
@@ -214,26 +214,30 @@ class GamesFragment : DaggerFragment() {
         }
     }
     private fun setUpObservers(){
-        storesViewModel.requestStatus.observe(viewLifecycleOwner){
-            if (it == "SUCCESS"){
-                storesModel = storesViewModel.stores.value!!
-                setUpStoresChipGroup(storesModel)
-                hideViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
-            }else if(it != ""){
-                showViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                gamesFragmentViewModel.gamesDealsData.collect{ result ->
+                    when(result.status){
+                        Status.LOADING -> view.gamesShimmerLayout.startShimmer()
+                        Status.SUCCESS -> if (!addingNewItemsToGamesRecycler) setUpGamesRecycler(result.data!!) else setUpNewGamesToRecycler(result.data!!)
+                        Status.ERROR -> showViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
+                    }
+                }
             }
         }
-        gamesDealsViewModel.requestStatus.observe(viewLifecycleOwner){
-            if (it == "SUCCESS"){
-                if (!addingNewItemsToGamesRecycler){
-                    setUpGamesRecycler(gamesDealsViewModel.gamesDealsData.value!!)
-                }else {
-                    setUpNewGamesToRecycler(gamesDealsViewModel.gamesDealsData.value!!)
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                gamesFragmentViewModel.storesData.collect{ result ->
+                    when(result.status){
+                        Status.LOADING -> null
+                        Status.SUCCESS -> {
+                            storesModel = result.data!!
+                            setUpStoresChipGroup(storesModel)
+                            hideViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
+                        }
+                        Status.ERROR -> showViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
+                    }
                 }
-                hideViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
-            }else if(it != ""){
-                showViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
-                hideLoadingProgressBar()
             }
         }
     }
@@ -248,7 +252,7 @@ class GamesFragment : DaggerFragment() {
     //Stores ChipGroup
     private fun getStoresList(){
         if (!checkForInternet()) return
-        storesViewModel.getStores()
+        gamesFragmentViewModel.getStores()
     }
     private fun setUpStoresChipGroup(data:StoresModel){
         //Creating Chips Group Layout
@@ -298,10 +302,10 @@ class GamesFragment : DaggerFragment() {
         if (!checkForInternet()) return
         if (filterViewModel.totalStores == filterViewModel.totalSelectedStores || filterViewModel.totalSelectedStores == -1){
             Log.d("Debug","1nd if $filterViewModel.totalSelectedStores,$filterViewModel.totalStores")
-            gamesDealsViewModel.startGamesRequest("ALL",filterViewModel.currentGamePriceFilter,filterViewModel.currentGamesPageNumber.toString(),filterViewModel.sortMode)
+            gamesFragmentViewModel.startGamesRequest("ALL",filterViewModel.currentGamePriceFilter,filterViewModel.currentGamesPageNumber.toString(),filterViewModel.sortMode)
         }else {
             Log.d("Debug","2nd if $filterViewModel.totalSelectedStores,$filterViewModel.totalStores")
-            gamesDealsViewModel.startGamesRequest(filterViewModel.selectedStores,filterViewModel.currentGamePriceFilter,filterViewModel.currentGamesPageNumber.toString(),filterViewModel.sortMode)
+            gamesFragmentViewModel.startGamesRequest(filterViewModel.selectedStores,filterViewModel.currentGamePriceFilter,filterViewModel.currentGamesPageNumber.toString(),filterViewModel.sortMode)
         }
     }
     private fun clearRecyclerDataAndStartGamesRequest(){
@@ -309,6 +313,7 @@ class GamesFragment : DaggerFragment() {
         startGamesDealsRequest()
     }
     private fun setUpGamesRecycler(games: Games) {
+        hideViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
         if(games.size <= 0){
             showViewWithAnimation(view.zeroFoundLayout)
             return
@@ -371,6 +376,7 @@ class GamesFragment : DaggerFragment() {
         view.loadingMoreProgressBar.visibility = View.GONE
     }
     private fun setUpNewGamesToRecycler(games:Games){
+        hideViewWithAnimation(view.serverErrorLayoutInclude.serverErrorMainLayout)
         Log.d("Debug","SetUpNewRecyclerDataGames")
         //Data Handel
         for (game in games){
@@ -464,8 +470,7 @@ class GamesFragment : DaggerFragment() {
         mInterstitialAd = null
         viewModelStore.clear()
         _view = null
-        _storesViewModel = null
-        _gamesDealsViewModel = null
+        _gamesFragmentViewModel = null
         super.onDestroyView()
     }
 }
